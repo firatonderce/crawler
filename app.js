@@ -131,9 +131,9 @@ puppeteerExtra.use(StealthPlugin());
     category.subCategories = await getSubCategories(category, initialLevel);
   }
 
-  //Write response as file.
-  const jsonData = JSON.stringify(categories, null, 2);
-  fs.writeFile('output.json', jsonData, err => {
+  //Write result to json file
+  const jsonResult = JSON.stringify(categories, null, 2);
+  fs.writeFile('output.json', jsonResult, err => {
     if (err) return console.error('An error occured when writing the file', err);
 
     console.log('File has been written successfully.');
