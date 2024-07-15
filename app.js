@@ -60,16 +60,14 @@ puppeteerExtra.use(StealthPlugin());
     return categories;
   };
 
-  const getSubCategories = async (category, l) => {
+  const getSubCategories = async (category, level) => {
     if (!category.extension) return {};
 
     const timeOut = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
-
     await delay(timeOut);
+
     const result = await goTo(category.extension, timeOut);
     if (!result.status) return {error: `CAN_NOT_TRAVERSE`, reason: result.message};
-
-    let level = l;
 
     const subCategories = await page.evaluate(level => {
       //Query generator
