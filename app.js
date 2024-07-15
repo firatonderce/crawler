@@ -18,18 +18,18 @@ const maxDelay = 25;
 // Apply stealth plugin
 puppeteerExtra.use(StealthPlugin());
 
-//IIFE
+// IIFE
 (async () => {
-  //Methods
+  // Methods
   const delay = time => new Promise(resolve => setTimeout(resolve, time * 1000));
 
   const goTo = async extension => {
     try {
       const url = `${baseUrl}${extension}`;
       await page.goto(url, {waitUntil: 'networkidle2'});
-      return {status: true, message: ''};
+      return {success: true, message: ''};
     } catch (error) {
-      return {status: false, message: error.message};
+      return {success: false, message: error.message};
     }
   };
 
@@ -67,10 +67,10 @@ puppeteerExtra.use(StealthPlugin());
     await delay(timeOut);
 
     const result = await goTo(category.extension, timeOut);
-    if (!result.status) return {error: `CAN_NOT_TRAVERSE`, reason: result.message};
+    if (!result.success) return {error: `CAN_NOT_TRAVERSE`, reason: result.message};
 
     const subCategories = await page.evaluate(level => {
-      //Query generator
+      // Query generator
       const elementGenerator = level => 'YOUR_LEVEL_BASED_ELEMENT_QUERY';
       const hrefGenerator = level => 'YOUR_LEVEL_BASED_HREF_QUERY';
       const additionalGenerator = () => 'OPTIONAL_LEVEL_BASED_ADDITIONAL_QUERY';
@@ -116,22 +116,22 @@ puppeteerExtra.use(StealthPlugin());
   // Create page
   const page = await browser.newPage();
 
-  //Go to the url and get main categories
+  // Go to the url and get main categories
   const result = await goTo(initialExtension);
-  if (!result.status) {
+  if (!result.success) {
     await browser.close();
-    return console.log('An error occured when getting main categories, aborting due to the error =>', result.message);
+    return console.log('An error occured when getting main categories, aborting due to the error => ', result.message);
   }
 
   let categories = await getCategories();
 
-  //Get each main category and its subcategories
+  // Get each main category and its subcategories
   for (let key in categories) {
     const category = categories[key];
     category.subCategories = await getSubCategories(category, initialLevel);
   }
 
-  //Write result to json file
+  // Write result to json file
   const jsonResult = JSON.stringify(categories, null, 2);
   fs.writeFile('output.json', jsonResult, err => {
     if (err) return console.error('An error occured when writing the file', err);
@@ -139,6 +139,6 @@ puppeteerExtra.use(StealthPlugin());
     console.log('File has been written successfully.');
   });
 
-  //Finish operation by closing the browser
+  // Finish operation by closing the browser
   await browser.close();
 })();
